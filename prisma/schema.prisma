@@ -9,3 +9,11 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Cost {
+  id       String   @id @default(cuid())
+  category String
+  amount   Float    @default(0)  
+  date     DateTime
+  file     String?
+}

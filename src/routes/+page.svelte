@@ -1,59 +1,41 @@
-<script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+<script lang="ts">
+    import { onMount } from 'svelte';
+    import type { PageData } from './$types';
+    import { superForm, dateProxy } from 'sveltekit-superforms/client';
+    import { costSchema } from '$lib/zod-validation';
+
+    let costs = [];
+    export let data: PageData;
+
+    const { form, errors, constraints, enhance } = superForm(data.form, {
+        validators: costSchema,
+    });
+
+    const proxy = dateProxy(form, 'date')
+
+    onMount(async() => {
+        const request = await fetch('/api/cost')
+        costs = await request.json()
+    })
+    
 </script>
 
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
+    {$form.date}
 
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
+    {#if costs.length}
+        Parapupi
+    {:else}
+        No hay Costs para mostrar
+    {/if}
 
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
-
-<style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
-
-	h1 {
-		width: 100%;
-	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
-</style>
+    <form use:enhance  method="post">
+        <input hidden name="id" bind:value={$form.id}>
+        <input hidden name="file" bind:value={$form.file}>
+        <input name="categry" bind:value={$form.category} {...$constraints.category}>
+        {$errors.category}
+        <input name="amount" bind:value={$form.amount} {...$constraints.amount}>
+        {$errors.amount}
+        <input name="date" type="date" bind:value={$proxy} {...$constraints.date}>
+        {$errors.date}
+        <button type="submit">Send</button>
+    </form>

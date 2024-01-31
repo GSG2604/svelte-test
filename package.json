@@ -37,6 +37,10 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"prisma": "^5.8.1"
+		"@prisma/client": "^5.9.0",
+		"prisma": "^5.8.1",
+		"superforms": "^0.0.1",
+		"sveltekit-superforms": "^1.13.4",
+		"zod": "^3.22.4"
 	}
 }
