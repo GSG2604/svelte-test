@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ request, params }) => {
         return actionResult('failure', {form}, {status: 400})
     }
     if(params.costId){
-        await updateCost({id: params.costId, category: form.data.category, amount: form.data.amount, date: form.data.date, file: form.data.file});
+        await updateCost({id: params.costId, category: form.data.category, amount: form.data.amount, date: form.data.date, file: form.data.file || ""});
     }else {
         await createCost({category: form.data.category, amount: form.data.amount, date: form.data.date, file: form.data.file});
     }
